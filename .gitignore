@@ -1,0 +1,43 @@
+# Node
+node_modules/
+
+# Build output
+out/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/settings.json
+
+# VS Code test artifacts
+.vscode-test/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# Generated rule file backups / temp
+*.tmp
+*.bak
+
+# Coverage
+coverage/
+*.lcov

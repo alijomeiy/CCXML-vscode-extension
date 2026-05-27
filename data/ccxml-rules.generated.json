@@ -1,0 +1,607 @@
+{
+    "source": "https://www.w3.org/TR/ccxml/",
+    "generatedAt": "2026-05-27T19:18:17.346961Z",
+    "tags": {
+        "accept": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "connectionid",
+                "hints"
+            ],
+            "description": "CCXML element <accept>"
+        },
+        "assign": {
+            "requiredAttributes": [
+                "expr",
+                "name"
+            ],
+            "allowedAttributes": [
+                "expr",
+                "name",
+                "value"
+            ],
+            "description": "CCXML element <assign>"
+        },
+        "audio": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "src"
+            ],
+            "description": "CCXML element <audio>"
+        },
+        "block": {
+            "requiredAttributes": [],
+            "allowedAttributes": [],
+            "description": "CCXML element <block>"
+        },
+        "cancel": {
+            "requiredAttributes": [
+                "sendid"
+            ],
+            "allowedAttributes": [
+                "sendid"
+            ],
+            "description": "CCXML element <cancel>"
+        },
+        "catch": {
+            "requiredAttributes": [],
+            "allowedAttributes": [],
+            "description": "CCXML element <catch>"
+        },
+        "ccxml": {
+            "requiredAttributes": [
+                "version"
+            ],
+            "allowedAttributes": [
+                "version",
+                "xml:base",
+                "xmlns:xsi",
+                "xsi:schemaLocation"
+            ],
+            "description": "CCXML element <ccxml>"
+        },
+        "clear": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "namelist"
+            ],
+            "description": "CCXML element <clear>"
+        },
+        "createcall": {
+            "requiredAttributes": [
+                "dest"
+            ],
+            "allowedAttributes": [
+                "aai",
+                "callerid",
+                "connectionid",
+                "dest",
+                "hints",
+                "joindirection",
+                "joinid",
+                "timeout"
+            ],
+            "description": "CCXML element <createcall>"
+        },
+        "createccxml": {
+            "requiredAttributes": [
+                "next"
+            ],
+            "allowedAttributes": [
+                "enctype",
+                "fetchparam",
+                "maxage",
+                "maxstale",
+                "method",
+                "namelist",
+                "next",
+                "parameters",
+                "sessionid",
+                "timeout"
+            ],
+            "description": "CCXML element <createccxml>"
+        },
+        "createconference": {
+            "requiredAttributes": [
+                "conferenceid"
+            ],
+            "allowedAttributes": [
+                "conferenceid",
+                "confname",
+                "hints",
+                "reservedlisteners",
+                "reservedtalkers"
+            ],
+            "description": "CCXML element <createconference>"
+        },
+        "csta:MakeCall": {
+            "requiredAttributes": [],
+            "allowedAttributes": [],
+            "description": "CCXML element <csta:MakeCall>"
+        },
+        "csta:calledDirectoryNumber": {
+            "requiredAttributes": [],
+            "allowedAttributes": [],
+            "description": "CCXML element <csta:calledDirectoryNumber>"
+        },
+        "csta:callingDevice": {
+            "requiredAttributes": [],
+            "allowedAttributes": [],
+            "description": "CCXML element <csta:callingDevice>"
+        },
+        "dc:creator": {
+            "requiredAttributes": [],
+            "allowedAttributes": [],
+            "description": "CCXML element <dc:creator>"
+        },
+        "destroyconference": {
+            "requiredAttributes": [
+                "conferenceid"
+            ],
+            "allowedAttributes": [
+                "conferenceid",
+                "hints"
+            ],
+            "description": "CCXML element <destroyconference>"
+        },
+        "dialogprepare": {
+            "requiredAttributes": [
+                "src"
+            ],
+            "allowedAttributes": [
+                "conferenceid",
+                "connectionid",
+                "dialogid",
+                "enctype",
+                "hints",
+                "maxage",
+                "maxstale",
+                "mediadirection",
+                "method",
+                "namelist",
+                "parameters",
+                "src",
+                "type"
+            ],
+            "description": "CCXML element <dialogprepare>"
+        },
+        "dialogstart": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "conferenceid",
+                "connectionid",
+                "dialogid",
+                "duplex",
+                "enctype",
+                "hints",
+                "maxage",
+                "maxstale",
+                "mediadirection",
+                "method",
+                "namelist",
+                "parameters",
+                "prepareddialogid",
+                "src",
+                "type"
+            ],
+            "description": "CCXML element <dialogstart>"
+        },
+        "dialogterminate": {
+            "requiredAttributes": [
+                "dialogid"
+            ],
+            "allowedAttributes": [
+                "dialogid",
+                "hints",
+                "immediate"
+            ],
+            "description": "CCXML element <dialogterminate>"
+        },
+        "disconnect": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "connectionid",
+                "hints",
+                "reason"
+            ],
+            "description": "CCXML element <disconnect>"
+        },
+        "else": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "none"
+            ],
+            "description": "CCXML element <else>"
+        },
+        "elseif": {
+            "requiredAttributes": [
+                "cond"
+            ],
+            "allowedAttributes": [
+                "cond"
+            ],
+            "description": "CCXML element <elseif>"
+        },
+        "eventprocessor": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "statevariable"
+            ],
+            "description": "CCXML element <eventprocessor>"
+        },
+        "exit": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "expr",
+                "namelist"
+            ],
+            "description": "CCXML element <exit>"
+        },
+        "fetch": {
+            "requiredAttributes": [
+                "next"
+            ],
+            "allowedAttributes": [
+                "enctype",
+                "fetchid",
+                "maxage",
+                "maxstale",
+                "method",
+                "mode",
+                "namelist",
+                "next",
+                "timeout",
+                "type"
+            ],
+            "description": "CCXML element <fetch>"
+        },
+        "field": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "id",
+                "name",
+                "type"
+            ],
+            "description": "CCXML element <field>"
+        },
+        "filled": {
+            "requiredAttributes": [],
+            "allowedAttributes": [],
+            "description": "CCXML element <filled>"
+        },
+        "form": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "id"
+            ],
+            "description": "CCXML element <form>"
+        },
+        "goto": {
+            "requiredAttributes": [
+                "fetchid"
+            ],
+            "allowedAttributes": [
+                "fetchid",
+                "next"
+            ],
+            "description": "CCXML element <goto>"
+        },
+        "grammar": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "src"
+            ],
+            "description": "CCXML element <grammar>"
+        },
+        "if": {
+            "requiredAttributes": [
+                "cond"
+            ],
+            "allowedAttributes": [
+                "cond"
+            ],
+            "description": "CCXML element <if>"
+        },
+        "join": {
+            "requiredAttributes": [
+                "id1",
+                "id2"
+            ],
+            "allowedAttributes": [
+                "autoinputgain",
+                "autooutputgain",
+                "dtmfclamp",
+                "duplex",
+                "entertone",
+                "exittone",
+                "hints",
+                "id1",
+                "id2",
+                "toneclamp"
+            ],
+            "description": "As an aid to understanding, the outcomes of all possible <join> operations are shown diagrammatically below for three different initial conditions: In summary, <join> behavior always respects three invariants:"
+        },
+        "log": {
+            "requiredAttributes": [
+                "expr"
+            ],
+            "allowedAttributes": [
+                "expr",
+                "label"
+            ],
+            "description": "CCXML element <log>"
+        },
+        "merge": {
+            "requiredAttributes": [
+                "connectionid1",
+                "connectionid2"
+            ],
+            "allowedAttributes": [
+                "connectionid1",
+                "connectionid2",
+                "hints"
+            ],
+            "description": "CCXML element <merge>"
+        },
+        "meta": {
+            "requiredAttributes": [
+                "content"
+            ],
+            "allowedAttributes": [
+                "content",
+                "http-equiv",
+                "name"
+            ],
+            "description": "CCXML element <meta>"
+        },
+        "metadata": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "none"
+            ],
+            "description": "CCXML element <metadata>"
+        },
+        "move": {
+            "requiredAttributes": [
+                "sessionid"
+            ],
+            "allowedAttributes": [
+                "event",
+                "sessionid",
+                "source"
+            ],
+            "description": "CCXML element <move>"
+        },
+        "prompt": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "bargein"
+            ],
+            "description": "CCXML element <prompt>"
+        },
+        "rdf:Description": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "dc:date",
+                "dc:description",
+                "dc:format",
+                "dc:language",
+                "dc:publisher",
+                "dc:rights",
+                "dc:title",
+                "rdf:about"
+            ],
+            "description": "CCXML element <rdf:Description>"
+        },
+        "rdf:RDF": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "xmlns:dc",
+                "xmlns:rdf"
+            ],
+            "description": "CCXML element <rdf:RDF>"
+        },
+        "record": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "name"
+            ],
+            "description": "CCXML element <record>"
+        },
+        "redirect": {
+            "requiredAttributes": [
+                "dest"
+            ],
+            "allowedAttributes": [
+                "connectionid",
+                "dest",
+                "hints",
+                "reason"
+            ],
+            "description": "CCXML element <redirect>"
+        },
+        "reject": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "connectionid",
+                "hints",
+                "reason"
+            ],
+            "description": "CCXML element <reject>"
+        },
+        "say-as": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "interpret-as"
+            ],
+            "description": "CCXML element <say-as>"
+        },
+        "script": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "charset",
+                "fetchid",
+                "maxage",
+                "maxstale",
+                "src",
+                "timeout"
+            ],
+            "description": "CCXML element <script>"
+        },
+        "send": {
+            "requiredAttributes": [
+                "target"
+            ],
+            "allowedAttributes": [
+                "delay",
+                "hints",
+                "name",
+                "namelist",
+                "sendid",
+                "target",
+                "targettype",
+                "xmlns:csta"
+            ],
+            "description": "CCXML element <send>"
+        },
+        "submit": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "namelist",
+                "next"
+            ],
+            "description": "CCXML element <submit>"
+        },
+        "transfer": {
+            "requiredAttributes": [],
+            "allowedAttributes": [],
+            "description": "When a VoiceXML application processes a <transfer> element it is handled within CCXML via series of events between the VoiceXML platform and the CCXML application. The type of transfer is controlled in VoiceXML 2.0 by the bridge attribute. If the value of bridge is \" true \" this will come in with a"
+        },
+        "transition": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "cond",
+                "event",
+                "state"
+            ],
+            "description": "CCXML element <transition>"
+        },
+        "unjoin": {
+            "requiredAttributes": [
+                "id1",
+                "id2"
+            ],
+            "allowedAttributes": [
+                "hints",
+                "id1",
+                "id2"
+            ],
+            "description": "CCXML element <unjoin>"
+        },
+        "value": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "expr"
+            ],
+            "description": "CCXML element <value>"
+        },
+        "var": {
+            "requiredAttributes": [
+                "name"
+            ],
+            "allowedAttributes": [
+                "expr",
+                "name"
+            ],
+            "description": "CCXML element <var>"
+        },
+        "vxml": {
+            "requiredAttributes": [],
+            "allowedAttributes": [
+                "version",
+                "xmlns:xsi",
+                "xsi:schemaLocation"
+            ],
+            "description": "CCXML element <vxml>"
+        }
+    },
+    "events": [
+        "ccxml.created",
+        "ccxml.dtd",
+        "ccxml.exit",
+        "ccxml.joined",
+        "ccxml.kill",
+        "ccxml.kill.unconditional",
+        "ccxml.loaded",
+        "ccxml.varname",
+        "ccxml.xsd",
+        "conference.asp",
+        "conference.created",
+        "conference.destroyed",
+        "conference.joined",
+        "conference.unjoined",
+        "connection.accept.failed",
+        "connection.alerting",
+        "connection.ccxml",
+        "connection.ccxml.conferenceid",
+        "connection.ccxml.connectionid",
+        "connection.ccxml.dialogid",
+        "connection.ccxml.sessionid",
+        "connection.ccxml.values",
+        "connection.connected",
+        "connection.disconnect",
+        "connection.disconnect.hangup",
+        "connection.disconnect.transfer",
+        "connection.disconnected",
+        "connection.error",
+        "connection.failed",
+        "connection.merge.failed",
+        "connection.merged",
+        "connection.progressing",
+        "connection.redirect",
+        "connection.redirect.failed",
+        "connection.redirected",
+        "connection.reject.failed",
+        "connection.rejected",
+        "connection.remote",
+        "connection.signal",
+        "connection.state",
+        "dialog.ccxml",
+        "dialog.disconnect",
+        "dialog.exit",
+        "dialog.prepared",
+        "dialog.started",
+        "dialog.terminatetransfer",
+        "dialog.transfer",
+        "dialog.transfer.complete",
+        "dialog.user",
+        "dialog.vxml",
+        "dialog.vxml.transfer.complete",
+        "error.ccxml",
+        "error.conference",
+        "error.conference.create",
+        "error.conference.destroy",
+        "error.conference.join",
+        "error.conference.unjoin",
+        "error.connection",
+        "error.connection.wrongstate",
+        "error.createccxml",
+        "error.dialog",
+        "error.dialog.notprepared",
+        "error.dialog.notstarted",
+        "error.dialog.wrongstate",
+        "error.fetch",
+        "error.move",
+        "error.notallowed",
+        "error.semantic",
+        "error.send",
+        "error.send.failed",
+        "error.send.targettypeinvalid",
+        "error.send.targetunavailable",
+        "error.unsupported",
+        "error.unsupported.transfer",
+        "error.vxml",
+        "fetch.done",
+        "send.successful"
+    ]
+}

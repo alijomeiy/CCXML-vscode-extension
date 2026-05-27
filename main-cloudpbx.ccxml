@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    <summary>
+    This CCXML document is the main entry point for the call handling.
+        It is responsible for handling the call from the caller and routing it to the appropriate
+    destination.
+        Destination can be one of the following:
+        - IVR
+        - CallCenter or any other cloud pbx service that can have a msisdn
+        - Another user
+        - External Number
+    </summary>
+-->
+<ccxml version="1.0">
+    <!-- CONFIGURATION SECTION -->
+    <!-- TODO: Check below for being correct in the current deployment -->
+
+    <!-- <var name="documentServerBaseUrl" expr="'http://ds/Documents'" /> -->
+    <var name="documentServerBaseUrl" expr="RESAA_CCXML_DS_BASE_URL" />
+    <!-- <var name="callTelemetryBaseUrl" expr="'http://rrfc:8080/v1/calltelemetry'" /> -->
+    <var name="callTelemetryBaseUrl" expr="RESAA_CCXML_CALL_TELEMETRY_BASE_URL" />
+    <!-- <var name="callCenterAgentTelemetryBaseUrl" expr="'http://ccfc:9035/v1/Calls/Agent'" /> -->
+    <var name="callCenterAgentTelemetryBaseUrl" expr="RESAA_CCXML_CALL_CENTER_AGENT_TELEMETRY_BASE_URL" />
+    <var name="mediationServerDomain" expr="RESAA_CCXML_MEDIATION_SERVER_DOMAIN" />
+    <var name="gatewayId" expr="RESAA_CCXML_MEDIATION_SERVER_GATEWAY" />
+    <var name="cloudPbxCC" expr="'990'" />
+    <var name="iranCC" expr="'98'" />
+    <var name="enterpriseNdc" expr="RESAA_CCXML_ENTERPRISE_NDC" />
+    <var name="extenstionMsisdnReservationBits" expr="'000'" />
+    <var name="systemMsisdnReservationBits" expr="'010'" />
+    <var name="callCenterMsisdnReservationBits" expr="'020'" />
+    <var name="agentMsisdnReservationBits" expr="'030'" />
+    <var name="cloudPbxDeploymentPostFixLength" expr="parseInt(RESAA_CCXML_DEPLOYMENT_POSTFIX_LENGTH)" />
+    <var name="cloudPbxDeploymentPrefix" expr="RESAA_CCXML_DEPLOYMENT_PREFIX" />
+    <var name="cloudPbxDeploymentCallerIdNumber" expr="RESAA_CCXML_DEPLOYMENT_CALLER_ID" />
+
+
+    <var name="callerConnectionId" />
+    <var name="caller" />
+    <var name="callee" />
+    <var name="isCalleePbxFullNumber" expr="'false'"/>
+    <var name="callerSessionId" />
+    <var name="callToDestinationSessionId" expr="''"/>
+    <var name="callCenterAgentTelemetrySessionId" expr="''"/>
+    <var name="manipulatedCallee" />
+    <var name="callDisconnectReason" expr="''" />
+    <var name="currentState" expr="'initial'" />
+    <var name="isAgentTelemetryEnabled" expr="true" />
+    <var name="isCallingToAgent" expr="false" />
+    <var name="isCallingToAgentHeader"/>
+    <var name="agentTelemetrySessionHeader" expr="''" />
+    <var name="informed" expr="'false'" />
+
+    <eventprocessor statevariable="currentState">
+
+        <!-- This transition is triggered when a new call is ringing -->
+        <transition state="initial" event="connection.alerting"> 
+            <log label="DEBUG" expr="'------------- initial -- connection.alerting -- main -------------'" />
+            <log label="MAIN" expr="'************ cloudPbxDeploymentPostFixLength: ' + parseInt(RESAA_CCXML_DEPLOYMENT_POSTFIX_LENGTH)" />
+            <log label="MAIN" expr="'event: ' + Object.keys(event$)" />
+            <log label="MAIN" expr="'channelHeaders: ' + Object.keys(event$.channelHeaders)" />
+            <log label="MAIN" expr="'channelHeaders: ' + event$.channelHeaders['X-R-IsCallToCallCenterAgent']" />
+
+            <assign name="isCallingToAgentHeader" expr="event$.channelHeaders['X-R-IsCallToCallCenterAgent'] == 'TRUE'" />
+            <!-- <assign name="isCallingToAgentHeader" expr="event$.channelHeaders['x-R-IsCallToCallCenterAgent']" /> -->
+            <assign name="isCallingToAgent" expr="isCallingToAgentHeader === 'TRUE'" />
+            <log label="MAIN" expr="'isCallingToAgentHeader: ' + isCallingToAgentHeader + ' --- isCallingToAgent: ' + isCallingToAgent" />
+
+            <assign name="agentTelemetrySessionHeader" expr="event$.channelHeaders['x-R-CallCenterAgentTelemetrySession']" />
+            <log label="MAIN" expr="'agentTelemetrySessionHeader: ' + agentTelemetrySessionHeader" />
+
+            <assign name="caller" expr="event$.phoneNumber" />
+            <assign name="callerSessionId" expr="session.id" />
+
+            <assign name="callee" expr="event$.hostPhoneNumber" />
+
+            <log label="MAIN" expr="'NEW CALL ARRIVED ------------ from ' + caller + ' to ' + callee" />
+
+            <if cond="callee.substring(7, 10) == agentMsisdnReservationBits">
+                <assign name="isCallingToAgent" expr="true" />
+                <log label="MAIN" expr="'isCallingToAgent Are TRUE'"/>
+            </if>
+
+            <!-- ********************************************** -->
+            <!-- START OF CALLER AND CALLEE MANIPULATION REGION -->
+            <!-- ********************************************** -->
+
+            <assign name="caller" expr="caller.padStart(5, '0')" />
+            <assign name="callee" expr="callee.padStart(5, '0')" />
+
+            <if cond="callee.indexOf(cloudPbxCC + enterpriseNdc + extenstionMsisdnReservationBits) == 0">
+                <assign name="isCalleePbxFullNumber" expr="'true'" />
+            </if>
+
+            <if cond="caller.length == 5">
+                <assign name="caller" expr="cloudPbxCC + enterpriseNdc + extenstionMsisdnReservationBits + caller" />
+                <elseif cond="caller.length == 10"/>
+                <assign name="caller" expr="iranCC + caller" />
+                <elseif cond="caller.length == 11 &amp;&amp; caller.indexOf('0') == 0"/>
+                <assign name="caller" expr="iranCC + caller.substr(1)" />
+            </if>
+
+            <if cond="callee.length == 5">
+                <assign name="callee" expr="cloudPbxCC + enterpriseNdc + extenstionMsisdnReservationBits + callee" />
+                <elseif cond="callee.length == 10"/>
+                <assign name="callee" expr="iranCC + callee" />
+                <elseif cond="callee.length == 11 &amp;&amp; callee.indexOf('0') == 0"/>
+                <assign name="callee" expr="iranCC + callee.substr(1)" />
+            </if>
+
+            <if cond="caller.indexOf(cloudPbxDeploymentPrefix) == 0">
+                <assign name="caller" expr="cloudPbxCC + enterpriseNdc + extenstionMsisdnReservationBits + caller.substr(-1 * cloudPbxDeploymentPostFixLength).padStart(5, '0')" />
+            </if>
+
+            <if cond="callee.indexOf(cloudPbxDeploymentPrefix) == 0">
+                <assign name="callee" expr="cloudPbxCC + enterpriseNdc + extenstionMsisdnReservationBits + callee.substr(-1 * cloudPbxDeploymentPostFixLength).padStart(5, '0')" />
+            </if>
+
+            <!-- 
+            <if cond="callee.indexOf(cloudPbxCC + enterpriseNdc + agentMsisdnReservationBits) == 0">
+                <assign name="callee" expr="cloudPbxCC + enterpriseNdc + extenstionMsisdnReservationBits + callee.substr(-5)" />
+            </if> -->
+
+            <!-- TODO: here we should update agent state in call center -->
+            <!-- Make caller and callee a valid msisdn if they are special service enabled pbx msisdns -->
+            <if cond="callee.indexOf(cloudPbxCC + enterpriseNdc + agentMsisdnReservationBits) == 0">
+                <assign name="callee" expr="cloudPbxCC + enterpriseNdc + extenstionMsisdnReservationBits + callee.substr(-5)" />
+                <!-- <assign name="isCallingToAgent" expr="isCallingToAgentHeader" /> -->
+                <if cond="isAgentTelemetryEnabled">
+                    <var name="parentSessionId" expr="session.id" />
+                    <var name="callerPhoneNumber" expr="caller" />
+                    <var name="calleePhoneNumber" expr="callee" />
+                    <var name="telemetryBaseUrl" expr="callCenterAgentTelemetryBaseUrl" />
+                    <var name="callerConnectionId" expr="event$.connectionId"/>
+
+                    <createccxml sessionid="callCenterAgentTelemetrySessionId" next="documentServerBaseUrl + '/Ccxml/telemetry.ccxml'" namelist="parentSessionId callerConnectionId callerPhoneNumber calleePhoneNumber telemetryBaseUrl" />
+                </if>
+            </if>
+
+            <!-- ********************************************** -->
+            <!-- END OF CALLER AND CALLEE MANIPULATION REGION -->
+            <!-- ********************************************** -->
+
+            <assign name="manipulatedCallee" expr="callee.substr(-5)" />
+
+            <assign name="callerConnectionId" expr="event$.connectionId" />
+
+            <log label="MAIN" expr="'new call: ' + caller + ' is calling ' + callee" />
+
+            <var name="callerMsisdn" expr="caller" />
+            <var name="calleeMsisdn" expr="callee" />
+            <var name="callId" expr="callerConnectionId" />
+            <var name="timestamp" expr="new Date().toISOString()" />
+
+            <var name="callTelemetryReceiveUrl" expr="callTelemetryBaseUrl + '/receive'" />
+
+            <fetch type="'application/json'" method="'post'" next="callTelemetryReceiveUrl" namelist="callerMsisdn calleeMsisdn callId timestamp" />
+        </transition>
+
+        <transition state="initial" event="fetch.done">
+            <log label="DEBUG" expr="'------------- initial -- fetch.done -- main ------------- isCallingToAgent: ' + isCallingToAgent" />
+            <if cond="event$.values.statusCode != '200'">
+                <log label="MAIN" expr="'Telemetry Receive Request Failed: ' + Object.keys(event$.values.errors)" />
+            </if>
+
+            <if cond="isCallingToAgent">
+                <log label="MAIN" expr="'Is Calling to Agent and send agent receive'" />
+                <send target="callCenterAgentTelemetrySessionId" targettype="'ccxml'" name="'telemetry.receive'" />
+                <else/>
+                <log label="MAIN" expr="'Call Is Regular and send connection.accept'" />
+                <send target="session.id" targettype="'ccxml'" name="'connection.accept'" />
+            </if>
+        </transition>
+
+        <transition event="telemetry.receive">
+            <log label="DEBUG" expr="'------------- NOSTATE -- telemetry.receive -- main -------------'" />
+            <send target="session.id" targettype="'ccxml'" name="'connection.accept'" />
+        </transition>
+
+        <transition event="connection.accept">
+            <log label="DEBUG" expr="'------------- NOSTATE -- connection.accept -- main -------------'" />
+            <log label="MAIN" expr="'we are accepting connection of a new call: ' + caller + ' is calling ' + callee" />
+
+            <!-- TODO: separate answering-call and make sure that the call should be answered -->
+            <assign name="currentState" expr="'answering-call'" />
+
+            <accept connectionid="callerConnectionId" />
+        </transition>
+
+        <transition state="answering-call" event="connection.connected">
+            <log label="DEBUG" expr="'------------- answering_call -- connection.connected -- main ------------- isCallingToAgent: ' + isCallingToAgent" />
+            <log label="MAIN" expr="'connection.connected in ' + currentState" />
+            <var name="callerMsisdn" expr="caller" />
+            <var name="calleeMsisdn" expr="callee" />
+            <var name="callId" expr="callerConnectionId" />
+            <var name="timestamp" expr="new Date().toISOString()" />
+
+            <var name="callTelemetryAcceptUrl" expr="callTelemetryBaseUrl + '/accept'" />
+            
+            <if cond="isCallingToAgent">
+                <log label="MAIN" expr="'Agent accept the call'" />
+                <send target="callCenterAgentTelemetrySessionId" targettype="'ccxml'" name="'telemetry.accept'" />
+            </if>
+
+            <fetch type="'application/json'" method="'post'" next="callTelemetryAcceptUrl" namelist="callerMsisdn calleeMsisdn callId timestamp" />
+        </transition>
+
+        <transition state="answering-call" event="fetch.done">
+            <log label="DEBUG" expr="'------------- answering_call -- fetch.done -- main -------------'" />
+            <if cond="event$.values.statusCode != 200">
+                <log label="MAIN" expr="'Telemetry Accept Request Failed: ' + event$.values.message" />
+                <log label="MAIN" expr="'Telemetry Accept Request Failed: ' + Object.keys(event$.values.errors)" />
+            </if>
+
+            <send target="session.id" targettype="'ccxml'" name="'connection.process'" />
+        </transition>
+
+        <transition event="connection.process">
+            <log label="DEBUG" expr="'------------- NOSTATE -- connection.process -- main -------------'" />
+            <log label="MAIN" expr="'******************************* callleeee is :  ' + callee" />
+
+            <if cond="callee.indexOf(cloudPbxCC) == 0 &amp;&amp; isCalleePbxFullNumber == 'false'">
+                <send target="session.id" targettype="'ccxml'" name="'ivr.start'" />
+                <else />
+                <send target="session.id" targettype="'ccxml'" name="'call.start'" />
+            </if>
+        </transition>
+
+        <transition event="ivr.start">
+            <log label="DEBUG" expr="'------------- NOSTATE -- ivr.start -- main -------------'" />
+            <!-- TODO: we should check if the callee is an IVR or not with HSS PbxSettings of msisdn -->
+            <assign name="currentState" expr="'trying-ivr-routes'" />
+
+            <var name="callerPhoneNumber" expr="caller" />
+
+            <dialogstart connectionid="callerConnectionId" src="documentServerBaseUrl + '/Vxml/'+manipulatedCallee+'.vxml'" namelist="callerSessionId callerConnectionId callerPhoneNumber" />
+        </transition>
+
+        <transition event="dialog.started">
+            <log label="DEBUG" expr="'------------- NOSTATE -- dialog.start -- main -------------'" />
+            <log label="MAIN" expr="'IVR is started ...'" />
+        </transition>
+
+        <transition event="dialog.exit">
+            <log label="DEBUG" expr="'------------- NOSTATE -- dialog.exit -- main -------------'" />
+            <log label="MAIN" expr="'IVR is Done and disconnecting the call in ' + currentState" />
+
+            <assign name="callDisconnectReason" expr="'NORMAL_CLEARING'" />
+
+            <!-- Here we resend the event to current session to handle the disconnection in the proper way -->
+            <assign name="currentState" expr="'disconnecting'" />
+            <disconnect connectionid="callerConnectionId" reason="callDisconnectReason" />
+            <send target="callerSessionId" targettype="'ccxml'" name="'informCallTelemetryForDisconnect'" />
+        </transition>
+
+        <!-- This transition is triggered when the callee number is not an IVR and dialog start failed -->
+        <transition event="error.dialog.notstarted">
+            <log label="DEBUG" expr="'------------- NOSTATE -- error.dialog.notstarted -- main -------------'" />
+            <!-- Here we assume that the callee is a user and we need to route the call to the user -->
+            <!-- TODO: we should check if the callee is a user or not with HSS PbxSettings of msisdn -->
+            <log label="MAIN" expr="'IVR was not successfull and going to call directly'" />
+
+            <send target="session.id" targettype="'ccxml'" name="'call.start'" />
+        </transition>
+
+        <transition event="call.start">
+            <log label="DEBUG" expr="'------------- NOSTATE -- call.start -- main -------------'" />
+            <log label="MAIN" expr="'call.start transition is trying to call the ' + callee" />
+
+            <assign name="currentState" expr="'trying-to-call-destination'" />
+
+            <var name="calleePhoneNumber" />
+            <var name="callerPhoneNumber" expr="cloudPbxDeploymentCallerIdNumber" />
+
+            <if cond="callee.indexOf(cloudPbxCC) == 0">
+                <assign name="calleePhoneNumber" expr="'sofia/' + mediationServerDomain + '/' + callee" />
+                <assign name="callerPhoneNumber" expr="caller" />
+                <else />
+                <assign name="calleePhoneNumber" expr="'sofia/gateway/' + gatewayId  + '/0' + callee.substr(2)" />
+            </if>
+
+            <log label="MAIN" expr="'trying to call directly to ' + calleePhoneNumber + ' from ' + callerPhoneNumber" />
+
+            <createccxml sessionid="callToDestinationSessionId" next="documentServerBaseUrl + '/Ccxml/conference-call.ccxml'" namelist="callerSessionId callerConnectionId callerPhoneNumber calleePhoneNumber" />
+        </transition>
+
+        <transition state="trying-to-call-destination" event="ccxml.created">
+            <log label="DEBUG" expr="'------------- trying_to_call_destination -- ccxml.created -- main -------------'" />
+            <log label="MAIN" expr="'conference-call ccxml session created in ' + currentState" />
+            <assign name="currentState" expr="'calling'" />
+        </transition>
+        
+        <transition event="calling.success">
+            <log label="DEBUG" expr="'------------- NOSTATE -- calling.success -- main -------------'" />
+            <log label="MAIN" expr="'Call To Destination was successful'" />
+            <assign name="currentState" expr="'in-call'" />
+            <if cond="isCallingToAgent">
+                <log label="MAIN" expr="'Call To Agent was successful and we are informing to VNF telemetry'" />
+
+                <send target="agentTelemetrySessionHeader" targettype="'ccxml'" name="'telemetry.accept'" />
+            </if>
+        </transition>
+
+        <transition event="telemetry.accept">
+            <log label="DEBUG" expr="'------------- NOSTATE -- telemetry.accept -- main -------------'" />
+            <log label="MAIN" expr="'Agent Telemetry Accept was successful'" />
+        </transition>
+        
+        <transition event="calling.failed">
+            <assign name="callDisconnectReason" expr="event$.values.reason" />
+            <log label="DEBUG" expr="'------------- NOSTATE -- calling.failed -- main -------------reason-in-event: ' +  event$.values.reason" />
+            <log label="MAIN" expr="'cloudpbx main ccxml --- calling.failed -- origination failed'" />
+            <log label="MAIN" expr="'cloudpbx main ccxml --- calling.failed -- origination failed, reason: ' + callDisconnectReason" />
+            <!-- TODO: Propagate hangup reason properly -->
+
+            <!-- Here we resend the event to current session to handle the disconnection in the proper way -->
+            <assign name="currentState" expr="'disconnecting'" />
+            <disconnect connectionid="callerConnectionId" reason="callDisconnectReason" />
+            <send target="callerSessionId" targettype="'ccxml'" name="'informCallTelemetryForDisconnect'" />
+        </transition>
+
+        <transition event="connection.disconnected">
+            <log label="MAIN" expr="'cloudpbx main ccxml --- connection.disconnected'" />
+            <var name="reason" expr="event$.reason" />
+            <log label="DEBUG" expr="'------------- NOSTATE -- connection.disconnected -- main -------------currentState: ' + currentState + ' -- reason: ' + reason" />
+            <log label="MAIN" expr="'connection.disconnected, currentState: ' + currentState + ' reason: ' + reason" />
+            <log label="MAIN" expr="'connection.disconnected, connection id: ' + event$.connectionId + ' callToDestinationSessionId: ' + callToDestinationSessionId" />
+
+            <!-- <if cond="currentState != 'disconnecting' &amp;&amp; callToDestinationSessionId != ''"> -->
+            <if cond="event$.connectionId == callerConnectionId &amp;&amp; callToDestinationSessionId != ''">
+                <log label="MAIN" expr="'connection.disconnectedByCaller to callee conference'" />
+                <send target="callToDestinationSessionId" targettype="'ccxml'" name="'connection.disconnectedByCaller'" namelist="reason" />
+            </if>
+
+            <if cond="agentTelemetrySessionHeader.legth > 0">
+                <log label="MAIN" expr="'connection of callcenter agent is disconnected and we are informing to related VNF telemetry'" />
+                <send target="agentTelemetrySessionHeader" targettype="'ccxml'" name="'telemetry.disconnect'" namelist="reason" />
+            </if>
+
+            <if cond="currentState =='in-call'">
+                <assign name="callDisconnectReason" expr="reason" />
+                <elseif cond="currentState == 'calling'"/>
+                <assign name="callDisconnectReason" expr="'ORIGINATOR_CANCEL'" />
+            </if>
+            <assign name="currentState" expr="'disconnecting'" />
+            <!-- Here we resend the event to current session to handle the disconnection in the proper way -->
+            <send target="callerSessionId" targettype="'ccxml'" name="'informCallTelemetryForDisconnect'" />
+        </transition>
+
+        <transition event="calling.disconnected">
+            <log label="DEBUG" expr="'------------- NOSTATE -- calling.disconnected -- main -------------'" />
+            <log label="MAIN" expr="'cloudpbx main ccxml --- calling.disconnected'" />
+            <assign name="currentState" expr="'disconnecting'" />
+
+            <assign name="callDisconnectReason" expr="event$.values.reason" />
+            <log label="MAIN" expr="'callDisconnectReason: ' + callDisconnectReason" />
+
+            <!-- Here we resend the event to current session to handle the disconnection in the proper way -->
+            <disconnect connectionid="callerConnectionId" reason="callDisconnectReason" />
+            <send target="callerSessionId" targettype="'ccxml'" name="'informCallTelemetryForDisconnect'" />
+        </transition>
+
+        <transition event="informCallTelemetryForDisconnect">
+            <!-- TODO: find out why it is called twice????????? -->
+            <if cond="informed != 'true'">
+                <var name="callTelemetryDisconnectUrl" expr="callTelemetryBaseUrl + '/disconnect'" />
+                <log label="DEBUG" expr="'------------- NOSTATE -- informCallTelemetryForDisconnect -- main -- url: ' + callTelemetryDisconnectUrl + ' -- reason: ' + callDisconnectReason + ' --- isCallingToAgent: ' + isCallingToAgent"/>
+                <assign name="informed" expr="'true'"/>
+                <var name="callerMsisdn" expr="caller" />
+                <var name="calleeMsisdn" expr="callee" />
+                <var name="callId" expr="callerConnectionId" />
+                <var name="timestamp" expr="new Date().toISOString()" />
+                <var name="hangUpCause" expr="callDisconnectReason" />
+                <log label="MAIN" expr="'current state is: ' + currentState" />
+                <fetch type="'application/json'" method="'post'" next="callTelemetryDisconnectUrl" namelist="callerMsisdn calleeMsisdn callId timestamp hangUpCause" />
+                <if cond="isCallingToAgent">
+                    <log label="MAIN" expr="'Is Calling to Agent and send agent disconnect'" />
+                    <send target="callCenterAgentTelemetrySessionId" targettype="'ccxml'" name="'telemetry.disconnect'" />
+                </if>
+                <else/>
+                <exit/>
+            </if>
+        </transition>
+
+        <transition state="disconnecting" event="fetch.done">
+            <log label="DEBUG" expr="'------------- disconnecting -- fetch.done -- main -------------'" />
+
+            <if cond="event$.values.statusCode != 200">
+                <log label="MAIN" expr="'Telemetry Disconnect Request Failed: ' + Object.keys(event$.values.errors)" />
+                <else/>
+                <log label="MAIN" expr="'Telemetry Disconnect Request Succeeded." />
+            </if>
+
+            <exit />
+        </transition>
+
+        <transition event="error.fetch">
+            <log label="DEBUG" expr="'------------- NOSTATE -- error.fetch -- main -------------'" />
+            <log label="MAIN" expr="'Request with uri ' + event$.uri + ' has finished with status of ' + event$.statusCode + ' and reason is: ' + event$.reason" />
+        </transition>
+
+        <transition event="message.xdump">
+            <log label="DEBUG" expr="'------------- NOSTATE -- message.xdump -- main -------------'" />
+            <log label="MAIN" expr="'Some one is asking for message.xdump'" />
+
+            <var name="requestingSessionId" expr="event$.values.sessionId" />
+
+            <var name="response" expr="{isCallingToAgent: isCallingToAgent, agentTelemetrySession: callCenterAgentTelemetrySessionId}" />
+
+            <send target="requestingSessionId" targettype="'ccxml'" name="'message.xdump.response'" namelist="response" />
+
+        </transition>
+
+    </eventprocessor>
+
+</ccxml>

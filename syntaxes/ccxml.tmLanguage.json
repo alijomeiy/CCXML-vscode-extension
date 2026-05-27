@@ -1,0 +1,100 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "CCXML",
+    "scopeName": "text.xml.ccxml",
+    "patterns": [
+        {
+            "include": "#comments"
+        },
+        {
+            "include": "#tags"
+        },
+        {
+            "include": "#entities"
+        }
+    ],
+    "repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.block.xml.ccxml",
+                    "begin": "<!--",
+                    "end": "-->"
+                }
+            ]
+        },
+        "tags": {
+            "patterns": [
+                {
+                    "name": "meta.tag.xml.ccxml",
+                    "begin": "(</?)([A-Za-z_][A-Za-z0-9_.:-]*)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.tag.begin.xml.ccxml"
+                        },
+                        "2": {
+                            "name": "entity.name.tag.xml.ccxml"
+                        }
+                    },
+                    "end": "(/?>)",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.tag.end.xml.ccxml"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "name": "entity.other.attribute-name.xml.ccxml",
+                            "match": "\\b[A-Za-z_][A-Za-z0-9_.:-]*(?=\\s*=)"
+                        },
+                        {
+                            "include": "#strings"
+                        }
+                    ]
+                }
+            ]
+        },
+        "strings": {
+            "patterns": [
+                {
+                    "name": "string.quoted.double.xml.ccxml",
+                    "begin": "\"",
+                    "end": "\"",
+                    "patterns": [
+                        {
+                            "name": "constant.language.event.ccxml",
+                            "match": "\\b(?:connection|dialog|conference|ccxml|error)\\.[A-Za-z0-9_.-]+\\b"
+                        },
+                        {
+                            "name": "variable.other.ccxml",
+                            "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+                        }
+                    ]
+                },
+                {
+                    "name": "string.quoted.single.xml.ccxml",
+                    "begin": "'",
+                    "end": "'",
+                    "patterns": [
+                        {
+                            "name": "constant.language.event.ccxml",
+                            "match": "\\b(?:connection|dialog|conference|ccxml|error)\\.[A-Za-z0-9_.-]+\\b"
+                        },
+                        {
+                            "name": "variable.other.ccxml",
+                            "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+                        }
+                    ]
+                }
+            ]
+        },
+        "entities": {
+            "patterns": [
+                {
+                    "name": "constant.character.entity.xml.ccxml",
+                    "match": "&[A-Za-z0-9#]+;"
+                }
+            ]
+        }
+    }
+}

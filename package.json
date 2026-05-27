@@ -1,0 +1,62 @@
+{
+  "name": "ccxml-tools",
+  "displayName": "CCXML Tools",
+  "description": "Language support for CCXML",
+  "version": "0.0.1",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:ccxml"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "ccxml",
+        "aliases": [
+          "CCXML",
+          "ccxml"
+        ],
+        "extensions": [
+          ".ccxml"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "ccxml",
+        "scopeName": "text.xml.ccxml",
+        "path": "./syntaxes/ccxml.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "CCXML Tools",
+      "properties": {
+        "ccxmlTools.validation.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable CCXML validation diagnostics."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "clean": "node -e \"require('fs').rmSync('out',{recursive:true,force:true})\"",
+    "build": "npm run clean && npm run compile",
+    "extract:ccxml-rules": "python3 scripts/extract_ccxml_rules.py --url https://www.w3.org/TR/ccxml/ --out data/ccxml-rules.generated.json"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.9.1",
+    "typescript": "^5.5.0"
+  }
+}
