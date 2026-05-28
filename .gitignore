@@ -4,6 +4,7 @@ node_modules/
 # Build output
 out/
 dist/
+*.vsix
 
 # Logs
 npm-debug.log*
