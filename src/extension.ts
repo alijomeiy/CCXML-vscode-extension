@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { loadCcxmlRules } from './schema';
 import { validateCcxmlDocument } from './diagnostics';
 import { createCompletionProvider } from './completion';
+import { createDefinitionProvider } from './definition';
 import { isCcxmlDocument } from './utils';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -46,6 +47,11 @@ export function activate(context: vscode.ExtensionContext) {
             '"',
             "'",
             '.'
+        ),
+
+        vscode.languages.registerDefinitionProvider(
+            { language: 'ccxml' },
+            createDefinitionProvider()
         )
     );
 }
