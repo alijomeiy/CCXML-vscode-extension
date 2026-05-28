@@ -21,6 +21,19 @@ function isInsideAttributeValue(prefix: string): boolean {
     return doubleQuotes % 2 === 1 || singleQuotes % 2 === 1;
 }
 
+function getTagCompletionRange(
+    document: vscode.TextDocument,
+    position: vscode.Position
+): vscode.Range {
+    const nextCharacter = document.lineAt(position.line).text[position.character];
+
+    if (nextCharacter === '>') {
+        return new vscode.Range(position, position.translate(0, 1));
+    }
+
+    return new vscode.Range(position, position);
+}
+
 export function createCompletionProvider(
     rules: CcxmlRules
 ): vscode.CompletionItemProvider {
@@ -36,6 +49,7 @@ export function createCompletionProvider(
                         tagName,
                         vscode.CompletionItemKind.Keyword
                     );
+                    item.range = getTagCompletionRange(document, position);
 
                     const rule = rules.tags[tagName];
                     const attrs = rule.requiredAttributes ?? [];
