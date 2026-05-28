@@ -2,13 +2,14 @@
   "name": "ccxml-tools",
   "displayName": "CCXML Tools",
   "description": "Language support for CCXML",
+  "repository": "https://github.com/microsoft/vscode-extension-samples/helloworld-sample",
   "version": "0.0.1",
-  "publisher": "local",
+  "publisher": "Ali Jomei",
   "engines": {
     "vscode": "^1.90.0"
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages" 
   ],
   "activationEvents": [
     "onLanguage:ccxml"
