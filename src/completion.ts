@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { CcxmlRules } from './schema';
+import { CcxmlRules, CcxmlTagRule } from './schema';
 import { collectVariables } from './diagnostics';
 
 function getLinePrefix(
@@ -34,6 +34,19 @@ function getTagCompletionRange(
     return new vscode.Range(position, position);
 }
 
+function createTagSnippet(tagName: string, rule: CcxmlTagRule): vscode.SnippetString {
+    const attrs = rule.requiredAttributes ?? [];
+    const attrSnippet = attrs.length > 0
+        ? ` ${attrs.map((a, i) => `${a}="\${${i + 1}}"`).join(' ')}`
+        : '';
+
+    if (rule.contentModel === 'empty') {
+        return new vscode.SnippetString(`${tagName}${attrSnippet} />$0`);
+    }
+
+    return new vscode.SnippetString(`${tagName}${attrSnippet}>$0</${tagName}>`);
+}
+
 export function createCompletionProvider(
     rules: CcxmlRules
 ): vscode.CompletionItemProvider {
@@ -52,15 +65,7 @@ export function createCompletionProvider(
                     item.range = getTagCompletionRange(document, position);
 
                     const rule = rules.tags[tagName];
-                    const attrs = rule.requiredAttributes ?? [];
-
-                    if (attrs.length > 0) {
-                        item.insertText = new vscode.SnippetString(
-                            `${tagName} ${attrs.map((a, i) => `${a}="\${${i + 1}}"`).join(' ')}>$0</${tagName}>`
-                        );
-                    } else {
-                        item.insertText = new vscode.SnippetString(`${tagName}>$0</${tagName}>`);
-                    }
+                    item.insertText = createTagSnippet(tagName, rule);
 
                     item.detail = 'CCXML tag';
                     item.documentation = rule.description;

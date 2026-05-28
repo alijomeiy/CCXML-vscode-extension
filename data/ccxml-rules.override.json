@@ -1,4 +1,104 @@
 {
-    "tags": {},
-    "events": []
+  "tags": {
+    "accept": {
+      "contentModel": "empty"
+    },
+    "assign": {
+      "contentModel": "empty"
+    },
+    "cancel": {
+      "contentModel": "empty"
+    },
+    "clear": {
+      "contentModel": "empty"
+    },
+    "createcall": {
+      "contentModel": "empty"
+    },
+    "createccxml": {
+      "contentModel": "empty"
+    },
+    "createconference": {
+      "contentModel": "empty"
+    },
+    "destroyconference": {
+      "contentModel": "empty"
+    },
+    "dialogprepare": {
+      "contentModel": "empty"
+    },
+    "dialogstart": {
+      "contentModel": "empty"
+    },
+    "dialogterminate": {
+      "contentModel": "empty"
+    },
+    "disconnect": {
+      "contentModel": "empty"
+    },
+    "else": {
+      "contentModel": "empty"
+    },
+    "elseif": {
+      "contentModel": "empty"
+    },
+    "exit": {
+      "contentModel": "empty"
+    },
+    "fetch": {
+      "contentModel": "empty"
+    },
+    "goto": {
+      "contentModel": "empty"
+    },
+    "join": {
+      "contentModel": "empty"
+    },
+    "log": {
+      "contentModel": "empty"
+    },
+    "merge": {
+      "contentModel": "empty"
+    },
+    "meta": {
+      "contentModel": "empty"
+    },
+    "move": {
+      "contentModel": "empty"
+    },
+    "redirect": {
+      "contentModel": "empty"
+    },
+    "reject": {
+      "contentModel": "empty"
+    },
+    "unjoin": {
+      "contentModel": "empty"
+    },
+    "var": {
+      "contentModel": "empty"
+    },
+    "ccxml": {
+      "contentModel": "children"
+    },
+    "eventprocessor": {
+      "contentModel": "children"
+    },
+    "if": {
+      "contentModel": "children"
+    },
+    "transition": {
+      "contentModel": "children"
+    },
+    "metadata": {
+      "contentModel": "children"
+    },
+    "script": {
+      "contentModel": "mixed"
+    },
+    "send": {
+      "contentModel": "mixed"
+    }
+  },
+  "events": []
 }

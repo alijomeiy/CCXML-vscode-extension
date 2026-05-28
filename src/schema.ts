@@ -7,6 +7,7 @@ export interface CcxmlTagRule {
     requiredAttributes: string[];
     allowedAttributes: string[];
     description?: string;
+    contentModel?: 'empty' | 'children' | 'mixed';
 }
 
 export interface CcxmlRules {
