@@ -1,4 +1,4 @@
-# Frankly Notes
+# Some Notes
 
 - This project is extension for CCXML file to make development more easy
 - This project mostly developed by AI tools!
