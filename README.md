@@ -1,3 +1,8 @@
+# Frankly Notes
+
+- This project is extension for CCXML file to make development more easy
+- This project mostly developed by AI tools!
+
 # CCXML Tools
 
 VS Code language support for CCXML files.
